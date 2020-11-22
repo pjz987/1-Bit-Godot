@@ -19,9 +19,19 @@ func _process(delta):
 		move(0, SPEED, delta)
 	
 	animationPlayer.play("Run") if moving else animationPlayer.play("Idle")
+	
+#	var areas = get_overlapping_areas() # 2 ways...
+#	for area in areas:
+#		area.queue_free()
 
 func move(xspeed, yspeed, delta):
 	position.x += xspeed * delta
 	position.y += yspeed * delta
 	
 	moving = true
+
+
+func _on_Pig_area_entered(area): #... of doing the same thing
+	area.queue_free()
+	scale *= 1.1
+	
