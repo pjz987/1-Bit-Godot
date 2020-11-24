@@ -3,6 +3,7 @@ extends Node2D
 const Enemy = preload("res://Enemy.tscn")
 
 onready var spawnPoints = $SpawnPoints
+onready var timer = $Timer
 
 func get_spawn_position():
 #	return spawnPoints.get_children().shuffle()[0].global_position # my one-liner !broken
@@ -20,3 +21,4 @@ func spawn_enemy():
 
 func _on_Timer_timeout():
 	spawn_enemy()
+	timer.wait_time *= 0.95

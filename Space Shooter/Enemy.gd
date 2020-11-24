@@ -6,14 +6,23 @@ export(int) var SPEED = 20
 export(int) var ARMOR = 3
 
 signal score_up
+var rng = RandomNumberGenerator.new()
+var up
 
-#func _ready(): replaced with setget
-#	var main = get_tree().current_scene
-#	if main.is_in_group("World"):
-#		main.score += 10
+
+func _ready():
+	rng.randomize()
+	up = 0.5 > rng.randf()
 
 func _process(delta):
+	if position.y <= 10 or position.y >= 170:
+		up = !up
+	
 	position.x -= SPEED * delta
+	if up:
+		position.y -= SPEED * delta / 2
+	else:
+		position.y += SPEED * delta / 2
 
 func _on_Enemy_body_entered(body):
 	body.queue_free()
