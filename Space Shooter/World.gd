@@ -10,3 +10,8 @@ func set_score(value):
 
 #func _on_Enemy_score_up(): replaced with setget
 #	self.score += 10
+
+
+func _on_Ship_player_death():
+	yield(get_tree().create_timer(1), "timeout")
+	get_tree().change_scene("res://GameOverScreen.tscn")
