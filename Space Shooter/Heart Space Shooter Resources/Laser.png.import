@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Bullet.png-5693d2a5a80b636208e42d904e715d8c.stex"
+path="res://.import/Laser.png-c0d9ef03098825d3658bb0325fe486f3.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Heart Space Shooter Resources/Bullet.png"
-dest_files=[ "res://.import/Bullet.png-5693d2a5a80b636208e42d904e715d8c.stex" ]
+source_file="res://Heart Space Shooter Resources/Laser.png"
+dest_files=[ "res://.import/Laser.png-c0d9ef03098825d3658bb0325fe486f3.stex" ]
 
 [params]
 
