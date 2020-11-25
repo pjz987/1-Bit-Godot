@@ -11,11 +11,13 @@ onready var sprite = $Sprite
 onready var spriteAnimator = $SpriteAnimator
 
 var motion = Vector2.ZERO
+var snap_vector = Vector2.ZERO
 
 func _physics_process(delta):
 	var input_vector = get_input_vector()
 	apply_horizontal_force(delta, input_vector)
 	apply_friction(input_vector)
+	update_snap_vector()
 	jump_check()
 	apply_gravity(delta)
 	update_animations(input_vector)
@@ -35,9 +37,14 @@ func apply_friction(input_vector):
 	if input_vector.x == 0 and is_on_floor():
 		motion.x = lerp(motion.x, 0, FRICTION)
 
+func update_snap_vector():
+	if is_on_floor():
+		snap_vector = Vector2.DOWN
+
 func jump_check():
 	if is_on_floor() and Input.is_action_just_pressed("ui_up"):
 		motion.y = -JUMP_FORCE
+		snap_vector = Vector2.ZERO
 		motion.y = min(motion.y, JUMP_FORCE)
 		
 	if Input.is_action_just_released("ui_up") and motion.y < -JUMP_FORCE/2:
@@ -58,4 +65,4 @@ func update_animations(input_vector):
 		spriteAnimator.play("Jump")
 
 func move():
-	motion = move_and_slide(motion, Vector2.UP)
+	motion = move_and_slide_with_snap(motion, snap_vector * 4, Vector2.UP, true, 4, deg2rad(MAX_SLOPE_ANGLE))

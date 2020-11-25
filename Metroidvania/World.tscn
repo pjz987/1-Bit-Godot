@@ -53,4 +53,9 @@ drag_margin_h_enabled = true
 drag_margin_v_enabled = true
 smoothing_enabled = true
 
+[node name="Terrain" type="StaticBody2D" parent="."]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Terrain"]
+polygon = PoolVector2Array( -32, 0, -16, 0, -16, 208, 112, 208, 144, 176, 176, 176, 176, 192, 208, 192, 208, 160, 272, 144, 320, 144, 320, 0, 336, 0, 336, 224, -32, 224 )
+
 [editable path="Player"]
