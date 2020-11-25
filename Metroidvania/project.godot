@@ -16,7 +16,7 @@ _global_script_class_icons={
 [application]
 
 config/name="Metroidvania"
-run/main_scene="res://World.tscn"
+run/main_scene="res://World/World.tscn"
 config/icon="res://icon.png"
 
 [display]
@@ -54,4 +54,5 @@ texture={
 
 [rendering]
 
+quality/2d/use_pixel_snap=true
 environment/default_environment="res://default_env.tres"
