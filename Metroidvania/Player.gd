@@ -12,8 +12,10 @@ onready var spriteAnimator = $SpriteAnimator
 
 var motion = Vector2.ZERO
 var snap_vector = Vector2.ZERO
+var just_jumped = false
 
 func _physics_process(delta):
+	just_jumped = false
 	var input_vector = get_input_vector()
 	apply_horizontal_force(delta, input_vector)
 	apply_friction(input_vector)
@@ -44,15 +46,16 @@ func update_snap_vector():
 func jump_check():
 	if is_on_floor() and Input.is_action_just_pressed("ui_up"):
 		motion.y = -JUMP_FORCE
+		just_jumped = true
 		snap_vector = Vector2.ZERO
-		motion.y = min(motion.y, JUMP_FORCE)
 		
 	if Input.is_action_just_released("ui_up") and motion.y < -JUMP_FORCE/2:
 		motion.y = -JUMP_FORCE / 2
 
 func apply_gravity(delta):
-#	if !is_on_floor():
+	if !is_on_floor():
 		motion.y += GRAVITY * delta
+		motion.y = min(motion.y, JUMP_FORCE)
 
 func update_animations(input_vector):
 	if input_vector.x != 0:
@@ -65,4 +68,22 @@ func update_animations(input_vector):
 		spriteAnimator.play("Jump")
 
 func move():
+	var was_in_air = !is_on_floor()
+	var was_on_floor = is_on_floor()
+	var last_position = position
+	var last_motion = motion
+	
 	motion = move_and_slide_with_snap(motion, snap_vector * 4, Vector2.UP, true, 4, deg2rad(MAX_SLOPE_ANGLE))
+	
+	#landing
+	if was_in_air and is_on_floor():
+		motion.x = last_motion.x
+	
+	# just left ground
+	if was_on_floor and !is_on_floor() and !just_jumped:
+		motion.y = 0
+		position.y = last_position.y
+
+	# prevent sliding (hack!)
+	if is_on_floor() and get_floor_velocity().length() == 0 and abs(motion.x) < 1:
+		position.x = last_position.x

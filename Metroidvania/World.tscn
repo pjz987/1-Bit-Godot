@@ -10,6 +10,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color( 0, 0, 0, 1 )
 __meta__ = {
+"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 
@@ -56,6 +57,6 @@ smoothing_enabled = true
 [node name="Terrain" type="StaticBody2D" parent="."]
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Terrain"]
-polygon = PoolVector2Array( -32, 0, -16, 0, -16, 208, 112, 208, 144, 176, 176, 176, 176, 192, 208, 192, 208, 160, 272, 144, 320, 144, 320, 0, 336, 0, 336, 224, -32, 224 )
+polygon = PoolVector2Array( -32, 0, -16, 0, -16, 208, 112, 208, 160, 208, 192, 176, 224, 176, 224, 208, 256, 208, 256, 176, 272, 176, 288, 176, 304, 160, 320, 160, 320, 0, 336, 0, 336, 224, -32, 224 )
 
 [editable path="Player"]
