@@ -6,7 +6,7 @@
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 16, 4 )
 
-[sub_resource type="Animation" id=3]
+[sub_resource type="Animation" id=2]
 resource_name = "Loop"
 length = 4.0
 loop = true
@@ -30,6 +30,8 @@ __meta__ = {
 
 [node name="KinematicBody2D" type="KinematicBody2D" parent="."]
 position = Vector2( 0, -54.0278 )
+collision_layer = 2
+collision_mask = 0
 motion/sync_to_physics = true
 
 [node name="Sprite" type="Sprite" parent="KinematicBody2D"]
@@ -55,4 +57,4 @@ remote_path = NodePath("../../../KinematicBody2D")
 autoplay = "Loop"
 playback_process_mode = 0
 playback_speed = 0.5
-anims/Loop = SubResource( 3 )
+anims/Loop = SubResource( 2 )
