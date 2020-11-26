@@ -1,8 +1,27 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://World/TileMap.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Player/Player.tscn" type="PackedScene" id=2]
 [ext_resource path="res://World/World.gd" type="Script" id=3]
+[ext_resource path="res://World/MovingPlatform.tscn" type="PackedScene" id=4]
+[ext_resource path="res://World/RightLeft.tres" type="Curve2D" id=5]
+
+[sub_resource type="Animation" id=1]
+resource_name = "Loop"
+length = 4.0
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Path2D/PathFollow2D:unit_offset")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 2 ),
+"transitions": PoolRealArray( -2, -2 ),
+"update": 0,
+"values": [ 0.0, 1.0 ]
+}
 
 [node name="World" type="Node"]
 script = ExtResource( 3 )
@@ -23,4 +42,23 @@ smoothing_enabled = true
 [node name="TileMap" parent="." instance=ExtResource( 1 )]
 tile_data = PoolIntArray( -65536, 0, 4, -65535, 0, 196609, -65534, 0, 196609, -65533, 0, 8, -65532, 0, 196609, -65531, 0, 8, -65530, 0, 196609, -65529, 0, 8, -65528, 0, 196609, -65527, 0, 196609, -65526, 0, 8, -65525, 0, 196609, -65524, 0, 8, -65523, 0, 196609, -65522, 0, 8, -65521, 0, 196609, -65520, 0, 196609, -65519, 0, 196609, -65518, 0, 196609, -65517, 0, 7, 0, 0, 65539, 3, 0, 65539, 5, 0, 65539, 7, 0, 65539, 10, 0, 65539, 12, 0, 65539, 14, 0, 65539, 19, 0, 65539, 65536, 0, 65539, 65539, 0, 196612, 65540, 0, 6, 65541, 0, 131080, 65542, 0, 5, 65543, 0, 196615, 65546, 0, 196612, 65547, 0, 6, 65548, 0, 131080, 65549, 0, 5, 65550, 0, 196615, 65555, 0, 65539, 131072, 0, 65539, 131076, 0, 131072, 131077, 0, 131073, 131078, 0, 131074, 131083, 0, 131072, 131084, 0, 131073, 131085, 0, 131074, 131091, 0, 65539, 196608, 0, 65539, 196627, 0, 65539, 262144, 0, 65539, 262160, 0, 4, 262161, 0, 196609, 262162, 0, 6, 262163, 0, 131079, 327680, 0, 65539, 327696, 0, 65539, 327698, 0, 131072, 327699, 0, 65543, 393216, 0, 65539, 393223, 0, 0, 393224, 0, 2, 393227, 1, 3, 393228, 1, 4, 393229, 536870912, 1, 393230, 0, 1, 393231, 0, 1, 393232, 0, 131080, 393233, 0, 2, 393235, 0, 65539, 458752, 0, 65539, 458756, 1, 0, 458757, 536870912, 1, 458758, 0, 196609, 458759, 0, 262150, 458760, 0, 262149, 458761, 0, 196609, 458762, 0, 6, 458763, 1, 5, 458764, 0, 65537, 458765, 0, 65541, 458766, 0, 131073, 458767, 0, 65542, 458768, 0, 65537, 458769, 0, 131077, 458770, 0, 1, 458771, 0, 131079, 524288, 0, 65539, 524292, 0, 65536, 524293, 0, 65538, 524295, 0, 65536, 524296, 0, 65538, 524298, 0, 65536, 524299, 0, 65537, 524300, 0, 65537, 524301, 0, 65538, 524303, 0, 65536, 524304, 0, 65537, 524305, 0, 65537, 524306, 0, 65537, 524307, 0, 65538, 589824, 0, 196612, 589825, 0, 196609, 589826, 0, 196609, 589827, 0, 196609, 589828, 0, 196614, 589829, 0, 196613, 589830, 0, 196609, 589831, 0, 196614, 589832, 0, 196613, 589833, 0, 196609, 589834, 0, 196614, 589835, 0, 131073, 589836, 0, 131073, 589837, 0, 196613, 589838, 0, 196609, 589839, 0, 196614, 589840, 0, 131073, 589841, 0, 131073, 589842, 0, 131073, 589843, 0, 131074 )
 
+[node name="MovingPlatform" parent="." instance=ExtResource( 4 )]
+position = Vector2( 160, 80 )
+
+[node name="Path2D" parent="MovingPlatform" index="1"]
+curve = ExtResource( 5 )
+
+[node name="MovingPlatform2" parent="." instance=ExtResource( 4 )]
+position = Vector2( 32, 96 )
+
+[node name="KinematicBody2D" parent="MovingPlatform2" index="0"]
+position = Vector2( 0, -16.0406 )
+
+[node name="AnimationPlayer" parent="MovingPlatform2" index="2"]
+anims/Loop = SubResource( 1 )
+
 [editable path="Player"]
+
+[editable path="MovingPlatform"]
+
+[editable path="MovingPlatform2"]
