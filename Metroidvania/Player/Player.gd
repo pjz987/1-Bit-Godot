@@ -4,6 +4,8 @@ const DustEffect = preload("res://Effects/DustEffect.tscn")
 const JumpEffect = preload("res://Effects/JumpEffect.tscn")
 const PlayerBullet = preload("res://Player/PlayerBullet.tscn")
 
+var PlayerStats = ResourceLoader.PlayerStats
+
 export (int) var ACCELERATION = 512
 export (int) var MAX_SPEED = 64
 export (float) var FRICTION = 0.25
@@ -24,11 +26,16 @@ var invincible = false setget set_invincible
 var motion = Vector2.ZERO
 var snap_vector = Vector2.ZERO
 var just_jumped = false
+var hits = 0
 
 func set_invincible(value):
 	invincible = value
 
+func _ready():
+	PlayerStats.connect("player_died", self, "_on_died")
+
 func _physics_process(delta):
+#	print(invincible)
 	just_jumped = false
 	var input_vector = get_input_vector()
 	apply_horizontal_force(delta, input_vector)
@@ -126,5 +133,18 @@ func move():
 
 
 func _on_Hurtbox_hit(damage):
+	print('invincible = ' + str(invincible))
 	if not invincible:
+		hits += 1
+		print('times hit = '+ str(hits))
+#		print(OS.get_unix_time())
+#		print(invincible)
+		PlayerStats.health -= damage
 		blinkAnimator.play("Blink")
+#		set_invincible(true)
+
+func _on_died():
+	queue_free()
+
+func print_test(message):
+	print(message)
