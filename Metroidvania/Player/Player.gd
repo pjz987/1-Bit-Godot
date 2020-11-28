@@ -42,6 +42,8 @@ var snap_vector = Vector2.ZERO
 var just_jumped = false
 var double_jump = true
 
+signal hit_door(door)
+
 func set_invincible(value):
 	invincible = value
 
