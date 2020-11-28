@@ -44,7 +44,7 @@ func set_invincible(value):
 
 func _ready():
 	PlayerStats.connect("player_died", self, "_on_died")
-	MainInstances.player = self
+	MainInstances.Player = self
 
 func _exit_tree():
 	MainInstances.player = null
