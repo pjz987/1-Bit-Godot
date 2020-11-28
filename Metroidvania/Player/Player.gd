@@ -27,6 +27,7 @@ onready var coyoteJumpTimer = $CoyoteJumpTimer
 onready var fireBulletTimer = $FireBulletTimer
 onready var gun = $Sprite/PlayerGun
 onready var muzzle = $Sprite/PlayerGun/Sprite/Muzzle
+onready var powerupDetector = $PowerupDetector
 
 enum {
 	MOVE,
@@ -82,7 +83,7 @@ func _physics_process(delta):
 		fire_bullet()
 	
 	if Input.is_action_pressed("fire_missile") and fireBulletTimer.time_left == 0:
-		if PlayerStats.missiles:
+		if PlayerStats.missiles and PlayerStats.missiles_unlocked:
 			fire_missile()
 
 func fire_bullet():
@@ -231,3 +232,8 @@ func _on_Hurtbox_hit(damage):
 
 func _on_died():
 	queue_free()
+
+
+func _on_PowerupDetector_area_entered(area):
+	if area is Powerup:
+		area._pickup()
