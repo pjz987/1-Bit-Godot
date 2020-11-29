@@ -725,7 +725,6 @@ __meta__ = {
 [node name="MiddleSegment" type="Sprite" parent="Sprite/LeftLowerLeg" index="0"]
 position = Vector2( -12, 3 )
 rotation = -0.436332
-scale = Vector2( 1, 1 )
 texture = ExtResource( 6 )
 offset = Vector2( -2, 4 )
 __meta__ = {
@@ -759,7 +758,6 @@ __meta__ = {
 [node name="MiddleSegment" type="Sprite" parent="Sprite/RightLowerLeg" index="0"]
 position = Vector2( 12, 3 )
 rotation = 0.436332
-scale = Vector2( 1, 1 )
 texture = ExtResource( 6 )
 offset = Vector2( 3, 4 )
 flip_h = true
@@ -792,7 +790,7 @@ position = Vector2( 0, -7 )
 shape = SubResource( 3 )
 
 [node name="EnemyStats" parent="." index="4"]
-max_health = 100
+max_health = 20
 
 [node name="Collider" parent="Hitbox" index="0"]
 shape = SubResource( 4 )
