@@ -10,6 +10,10 @@ onready var leftWallCheck = $LeftWallCheck
 
 signal died
 
+func _ready():
+	if SaverAndLoader.custom_data.boss_defeated:
+		queue_free()
+
 func _process(delta):
 	chase_player(delta)
 
@@ -35,5 +39,6 @@ func _on_Timer_timeout():
 	fire_bullet()
 
 func _on_EnemyStats_enemy_died():
-	._on_EnemyStats_enemy_died()
 	emit_signal("died")
+	SaverAndLoader.custom_data.boss_defeated = true
+	._on_EnemyStats_enemy_died()
