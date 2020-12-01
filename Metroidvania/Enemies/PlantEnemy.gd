@@ -10,9 +10,6 @@ onready var bulletSpawnPoint = $BulletSpawnPoint
 
 func fire_bullet():
 	var bullet = Utils.instance_scene_on_main(EnemyBullet, bulletSpawnPoint.global_position)
-	print(bullet.velocity)
 	var velocity = (fireDirection.global_position - global_position).normalized() * BULLET_SPEED
-	print(velocity)
 	velocity = velocity.rotated(deg2rad(rand_range(-SPREAD/2, SPREAD/2)))
-	print(velocity)
 	bullet.velocity = velocity
