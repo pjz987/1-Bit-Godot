@@ -12,6 +12,6 @@ func set_block_door(active):
 func _on_Trigger_area_triggered():
 	if not SaverAndLoader.custom_data.boss_defeated:
 		set_block_door(true)
-
+ 
 func _on_BossEnemy_died():
 	set_block_door(false)

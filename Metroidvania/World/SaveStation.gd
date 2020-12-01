@@ -5,7 +5,7 @@ var PlayerStats = ResourceLoader.PlayerStats
 onready var animationPlayer = $AnimationPlayer
 
 func _on_SaveArea_body_entered(_body):
-#	PlayerStats.health = PlayerStats.max_health
+	SoundFX.play("Powerup", 0.6, -10)
 	animationPlayer.play("Save")
 	SaverAndLoader.save_game()
 	PlayerStats.refill_stats()
