@@ -14,3 +14,7 @@ func _on_Hurtbox_hit(damage):
 func _on_EnemyStats_enemy_died():
 	Utils.instance_scene_on_main(EnemyDeathEffect, global_position)
 	queue_free()
+
+func _exit_tree(): # trying to get projectiles to disappear
+	for child in get_children():
+		print(child)

@@ -20,6 +20,9 @@ func change_levels(door):
 	currentLevel.queue_free()
 	var NewLevel = load(door.new_level_path)
 	var newLevel = NewLevel.instance()
+	
+	clear_projectiles()
+	
 	add_child(newLevel)
 	var newDoor = get_door_with_connection(door, door.connection)
 	var exit_position = newDoor.position - offset
@@ -39,3 +42,9 @@ func _on_Player_hit_door(door):
 func _on_Player_player_died():
 	yield(get_tree().create_timer(1.0), "timeout")
 	get_tree().change_scene("res://Menus/GameOverMenu.tscn")
+
+func clear_projectiles():
+	var projectiles = get_tree().get_nodes_in_group("Projectiles")
+	for projectile in projectiles:
+		if !projectile.is_in_group("Player"):
+			projectile.queue_free()

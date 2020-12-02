@@ -4,7 +4,7 @@
 [ext_resource path="res://Enemies/Enemy.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Enemies/CrawlingEnemy.gd" type="Script" id=3]
 
-[sub_resource type="Animation" id=3]
+[sub_resource type="Animation" id=1]
 resource_name = "Animate"
 length = 0.8
 loop = true
@@ -21,10 +21,10 @@ tracks/0/keys = {
 "values": [ 0, 1, 2, 3 ]
 }
 
-[sub_resource type="RectangleShape2D" id=1]
+[sub_resource type="RectangleShape2D" id=2]
 extents = Vector2( 8, 3 )
 
-[sub_resource type="RectangleShape2D" id=2]
+[sub_resource type="RectangleShape2D" id=3]
 extents = Vector2( 6, 2 )
 
 [node name="CrawlingEnemy" instance=ExtResource( 2 )]
@@ -37,15 +37,15 @@ hframes = 4
 
 [node name="AnimationPlayer" parent="." index="2"]
 autoplay = "Animate"
-anims/Animate = SubResource( 3 )
+anims/Animate = SubResource( 1 )
 
 [node name="Collider" parent="Hurtbox" index="0"]
 position = Vector2( 0, -4 )
-shape = SubResource( 1 )
+shape = SubResource( 2 )
 
 [node name="Collider" parent="Hitbox" index="0"]
 position = Vector2( 0, -3 )
-shape = SubResource( 2 )
+shape = SubResource( 3 )
 
 [node name="FloorCast" type="RayCast2D" parent="." index="6"]
 position = Vector2( 0, -4 )
