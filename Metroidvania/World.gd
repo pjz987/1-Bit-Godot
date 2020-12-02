@@ -2,7 +2,7 @@ extends Node
 
 var MainInstances = ResourceLoader.MainInstances
 
-onready var currentLevel = $Level_00
+onready var currentLevel = $Level_04
 
 func _ready():
 	VisualServer.set_default_clear_color(Color.black)
