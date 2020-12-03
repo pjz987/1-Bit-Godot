@@ -44,7 +44,6 @@ var snap_vector = Vector2.ZERO
 var just_jumped = false
 var double_jump = true
 var over_ladder = false
-var climbing = false
 var ladder = null
 
 # warning-ignore:unused_signal
@@ -95,6 +94,7 @@ func _physics_process(delta):
 			wall_detatch(delta, wall_axis)
 		
 		LADDER:
+			climb_animation()
 			climb_ladder()
 	
 	if Input.is_action_pressed("fire") and fireBulletTimer.time_left == 0:
@@ -262,20 +262,36 @@ func wall_detatch(delta, wall_axis):
 		state = MOVE
 
 func climb_ladder():
+	if Input.is_action_pressed("ui_up"):
+		position.y -= 0.5
+	if Input.is_action_pressed("ui_down"):
+		position.y += 0.5
+	if Input.is_action_just_pressed("ui_left"):
+		SoundFX.play("Jump", rand_range(0.8, 1.1), -10)
+		motion.x = -MAX_SPEED / 2
+		motion.y = -JUMP_FORCE / 1.25
+		state = MOVE
+	if Input.is_action_just_pressed("ui_right"):
+		SoundFX.play("Jump", rand_range(0.8, 1.1), -10)
+		motion.x = MAX_SPEED / 2
+		motion.y = -JUMP_FORCE / 1.25
+		state = MOVE
+#	else:
+##		position.x = ladder.global_position.x + 8
+#		spriteAnimator.play("Climb")
+#		if Input.is_action_pressed("ui_up"):
+#			position.y -= 0.5
+#		if Input.is_action_pressed("ui_down"):
+#			if is_on_floor():
+#				state = MOVE
+#			else:
+#				position.y += 0.5
+
+func climb_animation():
 	if Input.is_action_pressed("ui_up") or Input.is_action_pressed("ui_down"):
-		climbing = true
-	else:
-		climbing = false
-	if !climbing:
-		spriteAnimator.stop(false)
-	else:
-#		position.x = ladder.global_position.x + 8
 		spriteAnimator.play("Climb")
-		if Input.is_action_pressed("ui_up"):
-			position.y -= 0.5
-		if Input.is_action_pressed("ui_down"):
-			position.y += 0.5
-	
+	else:
+		spriteAnimator.stop(false)
 
 func _on_Hurtbox_hit(damage):
 	SoundFX.play("Hurt")
@@ -287,25 +303,15 @@ func _on_died():
 	emit_signal("player_died")
 	queue_free()
 
-
 func _on_PowerupDetector_area_entered(area):
 	if area is Powerup:
 		area._pickup()
-
-#func _on_LadderDetector_area_entered(area):
-#	over_ladder = true
-#	ladder = area
-#
-#func _on_LadderDetector_area_exited(_area):
-#	over_ladder = false
-#	ladder = null
-#	state = MOVE
 
 func _on_LadderDetector_body_entered(body):
 	over_ladder = true
 	ladder = body
 
-func _on_LadderDetector_body_exited(body):
+func _on_LadderDetector_body_exited(_body):
 	over_ladder = false
 	ladder = null
 	state = MOVE
