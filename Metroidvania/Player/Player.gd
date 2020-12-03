@@ -32,7 +32,8 @@ onready var cameraFollow = $CameraFollow
 
 enum {
 	MOVE,
-	WALL_SLIDE
+	WALL_SLIDE,
+	LADDER
 }
 
 
@@ -42,6 +43,7 @@ var motion = Vector2.ZERO
 var snap_vector = Vector2.ZERO
 var just_jumped = false
 var double_jump = true
+var over_ladder = false
 
 # warning-ignore:unused_signal
 signal hit_door(door)
@@ -61,6 +63,7 @@ func queue_free():
 	.queue_free()
 
 func _physics_process(delta):
+	
 	just_jumped = false
 	
 	match state:
@@ -261,3 +264,9 @@ func _on_died():
 func _on_PowerupDetector_area_entered(area):
 	if area is Powerup:
 		area._pickup()
+
+func _on_LadderDetector_area_entered(area):
+	over_ladder = true
+
+func _on_LadderDetector_area_exited(area):
+	over_ladder = false

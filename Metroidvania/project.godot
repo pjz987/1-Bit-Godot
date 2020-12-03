@@ -9,6 +9,11 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "Area2D",
+"class": "Ladder",
+"language": "GDScript",
+"path": "res://World/Ladder.gd"
+}, {
 "base": "Resource",
 "class": "MainInstances",
 "language": "GDScript",
@@ -25,6 +30,7 @@ _global_script_classes=[ {
 "path": "res://Player/Powerup.gd"
 } ]
 _global_script_class_icons={
+"Ladder": "",
 "MainInstances": "",
 "PlayerStats": "",
 "Powerup": ""
@@ -137,6 +143,7 @@ fire_missile={
 2d_physics/layer_4="EnemyHurtbox"
 2d_physics/layer_5="Brick"
 2d_physics/layer_6="Powerup"
+2d_physics/layer_7="Ladder"
 
 [rendering]
 

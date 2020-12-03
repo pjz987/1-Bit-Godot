@@ -25,7 +25,6 @@ func load_game():
 		return
 	
 	var persistingNodes = get_tree().get_nodes_in_group("Persists")
-	print(persistingNodes)
 	for node in persistingNodes:
 		node.queue_free()
 	
@@ -40,7 +39,6 @@ func load_game():
 			var current_line = parse_json(line_string)
 			if current_line != null:
 				var newNode = load(current_line.filename).instance()
-				print(current_line.parent)
 				get_node(current_line.parent).add_child(newNode, true)
 				newNode.position = Vector2(current_line.position_x, current_line.position_y)
 				for property in current_line.keys():
