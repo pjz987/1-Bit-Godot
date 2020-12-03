@@ -44,6 +44,8 @@ var snap_vector = Vector2.ZERO
 var just_jumped = false
 var double_jump = true
 var over_ladder = false
+var climbing = false
+var ladder = null
 
 # warning-ignore:unused_signal
 signal hit_door(door)
@@ -63,6 +65,8 @@ func queue_free():
 	.queue_free()
 
 func _physics_process(delta):
+	if over_ladder:
+		print('ladder')
 	
 	just_jumped = false
 	
@@ -72,7 +76,7 @@ func _physics_process(delta):
 			apply_horizontal_force(delta, input_vector)
 			apply_friction(input_vector)
 			update_snap_vector()
-			jump_check()
+			jump_and_ladder_check()
 			apply_gravity(delta)
 			update_animations(input_vector)
 			move()
@@ -89,6 +93,9 @@ func _physics_process(delta):
 			wall_slide_drop(delta)
 			move()
 			wall_detatch(delta, wall_axis)
+		
+		LADDER:
+			climb_ladder()
 	
 	if Input.is_action_pressed("fire") and fireBulletTimer.time_left == 0:
 		fire_bullet()
@@ -149,8 +156,12 @@ func update_snap_vector():
 	if is_on_floor():
 		snap_vector = Vector2.DOWN
 
-func jump_check():
-	if is_on_floor() or coyoteJumpTimer.time_left > 0:
+func jump_and_ladder_check():
+	if over_ladder:
+		if Input.is_action_just_pressed("ui_up") or Input.is_action_just_pressed("ui_down"):
+			state = LADDER
+	
+	elif is_on_floor() or coyoteJumpTimer.time_left > 0:
 		if Input.is_action_just_pressed("ui_up"):
 			jump(JUMP_FORCE)
 			just_jumped = true
@@ -250,6 +261,22 @@ func wall_detatch(delta, wall_axis):
 	if wall_axis == 0 or is_on_floor():
 		state = MOVE
 
+func climb_ladder():
+	if Input.is_action_pressed("ui_up") or Input.is_action_pressed("ui_down"):
+		climbing = true
+	else:
+		climbing = false
+	if !climbing:
+		spriteAnimator.stop(false)
+	else:
+#		position.x = ladder.global_position.x + 8
+		spriteAnimator.play("Climb")
+		if Input.is_action_pressed("ui_up"):
+			position.y -= 0.5
+		if Input.is_action_pressed("ui_down"):
+			position.y += 0.5
+	
+
 func _on_Hurtbox_hit(damage):
 	SoundFX.play("Hurt")
 	if not invincible:
@@ -265,8 +292,20 @@ func _on_PowerupDetector_area_entered(area):
 	if area is Powerup:
 		area._pickup()
 
-func _on_LadderDetector_area_entered(area):
-	over_ladder = true
+#func _on_LadderDetector_area_entered(area):
+#	over_ladder = true
+#	ladder = area
+#
+#func _on_LadderDetector_area_exited(_area):
+#	over_ladder = false
+#	ladder = null
+#	state = MOVE
 
-func _on_LadderDetector_area_exited(area):
+func _on_LadderDetector_body_entered(body):
+	over_ladder = true
+	ladder = body
+
+func _on_LadderDetector_body_exited(body):
 	over_ladder = false
+	ladder = null
+	state = MOVE

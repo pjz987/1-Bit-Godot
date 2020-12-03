@@ -219,5 +219,7 @@ shape = ExtResource( 5 )
 [connection signal="area_entered" from="PowerupDetector" to="." method="_on_PowerupDetector_area_entered"]
 [connection signal="area_entered" from="LadderDetector" to="." method="_on_LadderDetector_area_entered"]
 [connection signal="area_exited" from="LadderDetector" to="." method="_on_LadderDetector_area_exited"]
+[connection signal="body_entered" from="LadderDetector" to="." method="_on_LadderDetector_body_entered"]
+[connection signal="body_exited" from="LadderDetector" to="." method="_on_LadderDetector_body_exited"]
 
 [editable path="Hurtbox"]
