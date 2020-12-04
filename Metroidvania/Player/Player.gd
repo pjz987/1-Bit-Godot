@@ -46,6 +46,18 @@ var double_jump = true
 var over_ladder = false
 var ladder = null
 
+var properties = {
+	state = state,
+	invincible = invincible,
+	motion = motion,
+	snap_vector = snap_vector,
+	just_jumped = just_jumped,
+	double_jump = double_jump,
+	over_ladder = over_ladder,
+	ladder = ladder
+}
+
+
 # warning-ignore:unused_signal
 signal hit_door(door)
 signal player_died
@@ -171,10 +183,12 @@ func jump_and_ladder_check():
 			double_jump = false
 
 func jump(force):
+	print(motion, snap_vector)
 	SoundFX.play("Jump", rand_range(0.8, 1.1), -10)
 	Utils.instance_scene_on_main(JumpEffect, global_position)
 	motion.y = -force
 	snap_vector = Vector2.ZERO
+	print(motion, snap_vector)
 
 func apply_gravity(delta):
 	if !is_on_floor():
@@ -261,19 +275,19 @@ func wall_detatch(delta, wall_axis):
 func climb_ladder():
 	if Input.is_action_pressed("ui_up"):
 		position.y -= 0.5
-	if Input.is_action_pressed("ui_down"):
+	elif Input.is_action_pressed("ui_down"):
 		position.y += 0.5
-	if Input.is_action_just_pressed("ui_left"):
+	elif Input.is_action_just_pressed("ui_left"):
 		SoundFX.play("Jump", rand_range(0.8, 1.1), -10)
 		motion.x = -MAX_SPEED / 2
 		motion.y = -JUMP_FORCE / 1.25
 		state = MOVE
-	if Input.is_action_just_pressed("ui_right"):
+	elif Input.is_action_just_pressed("ui_right"):
 		SoundFX.play("Jump", rand_range(0.8, 1.1), -10)
 		motion.x = MAX_SPEED / 2
 		motion.y = -JUMP_FORCE / 1.25
 		state = MOVE
-	if Input.is_action_just_pressed("jump"):
+	elif Input.is_action_just_pressed("jump"):
 		jump(JUMP_FORCE)
 		just_jumped = true
 		state = MOVE
