@@ -64,9 +64,6 @@ func queue_free():
 	.queue_free()
 
 func _physics_process(delta):
-	if over_ladder:
-		print('ladder')
-	
 	just_jumped = false
 	
 	match state:
@@ -162,14 +159,14 @@ func jump_and_ladder_check():
 			state = LADDER
 	
 	elif is_on_floor() or coyoteJumpTimer.time_left > 0:
-		if Input.is_action_just_pressed("ui_up"):
+		if Input.is_action_just_pressed("jump"):
 			jump(JUMP_FORCE)
 			just_jumped = true
 	else:
-		if Input.is_action_just_released("ui_up") and motion.y < -JUMP_FORCE/2:
+		if Input.is_action_just_released("jump") and motion.y < -JUMP_FORCE/2:
 			motion.y = -JUMP_FORCE / 2
 		
-		if Input.is_action_just_pressed("ui_up") and double_jump:
+		if Input.is_action_just_pressed("jump") and double_jump:
 			jump(JUMP_FORCE * 0.75)
 			double_jump = false
 
@@ -235,7 +232,7 @@ func get_wall_axis():
 	return int(is_left_wall) - int(is_right_wall)
 
 func wall_slide_jump_check(wall_axis):
-	if Input.is_action_just_pressed("ui_up"):
+	if Input.is_action_just_pressed("jump"):
 		SoundFX.play("Jump", rand_range(0.8, 1.1), -10)
 		motion.x = wall_axis * MAX_SPEED
 		motion.y = -JUMP_FORCE / 1.25
@@ -276,16 +273,10 @@ func climb_ladder():
 		motion.x = MAX_SPEED / 2
 		motion.y = -JUMP_FORCE / 1.25
 		state = MOVE
-#	else:
-##		position.x = ladder.global_position.x + 8
-#		spriteAnimator.play("Climb")
-#		if Input.is_action_pressed("ui_up"):
-#			position.y -= 0.5
-#		if Input.is_action_pressed("ui_down"):
-#			if is_on_floor():
-#				state = MOVE
-#			else:
-#				position.y += 0.5
+	if Input.is_action_just_pressed("jump"):
+		jump(JUMP_FORCE)
+		just_jumped = true
+		state = MOVE
 
 func climb_animation():
 	if Input.is_action_pressed("ui_up") or Input.is_action_pressed("ui_down"):
