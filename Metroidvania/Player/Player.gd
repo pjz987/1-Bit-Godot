@@ -183,12 +183,10 @@ func jump_and_ladder_check():
 			double_jump = false
 
 func jump(force):
-	print(motion, snap_vector)
 	SoundFX.play("Jump", rand_range(0.8, 1.1), -10)
 	Utils.instance_scene_on_main(JumpEffect, global_position)
 	motion.y = -force
 	snap_vector = Vector2.ZERO
-	print(motion, snap_vector)
 
 func apply_gravity(delta):
 	if !is_on_floor():

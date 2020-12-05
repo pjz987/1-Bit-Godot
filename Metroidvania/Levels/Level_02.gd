@@ -4,6 +4,7 @@ const PLAYER_BIT = 0
 
 onready var bossEnemy = $BossEnemy
 onready var blockDoor = $BlockDoor
+onready var divePoints = $DivePoints
 
 func set_block_door(active):
 	blockDoor.visible = active

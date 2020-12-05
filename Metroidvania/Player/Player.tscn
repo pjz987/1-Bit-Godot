@@ -198,7 +198,6 @@ collision_layer = 4
 [node name="Collider" parent="Hurtbox" index="0"]
 position = Vector2( 0, -7 )
 shape = ExtResource( 5 )
-disabled = true
 
 [node name="PowerupDetector" type="Area2D" parent="."]
 collision_layer = 0

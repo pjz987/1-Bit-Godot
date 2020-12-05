@@ -7,6 +7,14 @@ export (int) var ACCELERATION = 70
 
 onready var rightWallCheck = $RightWallCheck
 onready var leftWallCheck = $LeftWallCheck
+onready var dive_points = get_tree().get_nodes_in_group("DivePoints")
+
+enum {
+	SHOOT,
+	DIVE
+}
+
+var state = SHOOT
 
 signal died
 
@@ -15,7 +23,9 @@ func _ready():
 		queue_free()
 
 func _process(delta):
-	chase_player(delta)
+	match state:
+		SHOOT:
+			chase_player(delta)
 
 func chase_player(delta):
 	var player = MainInstances.Player
