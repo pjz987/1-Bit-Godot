@@ -9,6 +9,7 @@ export (int) var DIVE_ACCELERATION = 200
 
 onready var rightWallCheck = $RightWallCheck
 onready var leftWallCheck = $LeftWallCheck
+onready var animationPlayer = $AnimationPlayer
 onready var dive_points = get_tree().get_nodes_in_group("DivePoints")
 
 enum {
@@ -52,8 +53,6 @@ func pre_dive(delta):
 	var dive_point = dive_points[dive_points_index]
 	var vector_to_point = dive_point.global_position - global_position
 	var direction = vector_to_point.normalized()
-	print('vector_to_point: ', vector_to_point)
-	print('direction: ', direction)
 	if abs(vector_to_point.x) <= 20 and abs(vector_to_point.y) <= 20:
 		motion = lerp(motion, vector_to_point, DECELERATION)
 	else:
@@ -62,16 +61,21 @@ func pre_dive(delta):
 		motion.y = clamp(motion.y, -MAX_SPEED, MAX_SPEED)
 	
 	global_position += motion * delta
+#	move_and_collide(motion, delta)
 	if abs(vector_to_point.x) <= 2.5 and abs(vector_to_point.y) <=2.5:
 		state = DIVE
+		animationPlayer.play("Dive")
 		dive_points_index += 1
 
 func dive(delta):
-	print('motion.x', motion.x, 'motion.y', motion.y)
 	motion.y += DIVE_ACCELERATION * delta
 	var collision = move_and_collide(motion * delta)
 	if collision:
+		motion.y = 0
+		Events.emit_signal("add_screenshake", 0.5, 1)
+		SoundFX.play("Explosion", rand_range(0.05, 0.15), 20)
 		state = PRE_DIVE
+		animationPlayer.play("Fly")
 
 func fire_bullet() -> void:
 	var bullet = Utils.instance_scene_on_main(Bullet, global_position)
@@ -80,9 +84,9 @@ func fire_bullet() -> void:
 	bullet.velocity = velocity
 
 func _on_Timer_timeout():
-	match state:
-		SHOOT:
-			fire_bullet()
+#	match state:
+#		SHOOT:
+	fire_bullet()
 
 func _on_EnemyStats_enemy_died():
 	emit_signal("died")
