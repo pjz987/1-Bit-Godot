@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Enemies/BossEnemy.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Enemies/MiniBossEnemy.gd" type="Script" id=2]
+
+[node name="MiniBossEnemy" instance=ExtResource( 1 )]
+scale = Vector2( 0.2, 0.2 )
+script = ExtResource( 2 )
+shoot_mode = true
+
+[editable path="Hurtbox"]
+
+[editable path="Hitbox"]

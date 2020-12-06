@@ -6,6 +6,7 @@ const Bullet = preload("res://Enemies/EnemyBullet.tscn")
 export (int) var ACCELERATION = 70
 export (float) var DECELERATION = 0.05
 export (int) var DIVE_ACCELERATION = 200
+export (bool) var shoot_mode = false
 
 onready var rightWallCheck = $RightWallCheck
 onready var leftWallCheck = $LeftWallCheck
@@ -25,6 +26,8 @@ var dive_points_index = 0
 signal died
 
 func _ready():
+	if shoot_mode:
+		state = SHOOT
 	if SaverAndLoader.custom_data.boss_defeated:
 		queue_free()
 
@@ -77,11 +80,12 @@ func dive(delta):
 		state = PRE_DIVE
 		animationPlayer.play("Fly")
 
-func fire_bullet() -> void:
+func fire_bullet():
 	var bullet = Utils.instance_scene_on_main(Bullet, global_position)
 	var velocity = Vector2.DOWN * 50
 	velocity = velocity.rotated(deg2rad(rand_range(-30, 30)))
 	bullet.velocity = velocity
+	return bullet
 
 func _on_Timer_timeout():
 #	match state:
