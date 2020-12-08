@@ -3,7 +3,7 @@
 [ext_resource path="res://Player/PlayerShip.png" type="Texture" id=1]
 [ext_resource path="res://Effects/Particle.png" type="Texture" id=2]
 
-[sub_resource type="Animation" id=2]
+[sub_resource type="Animation" id=1]
 length = 2.0
 loop = true
 step = 0.5
@@ -20,33 +20,33 @@ tracks/0/keys = {
 "values": [ Vector2( 0, -2 ), Vector2( 0, 2 ) ]
 }
 
-[sub_resource type="Curve" id=3]
+[sub_resource type="Curve" id=2]
 _data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 0.504545 ), 0.0, 0.0, 0, 0 ]
 
-[sub_resource type="CurveTexture" id=4]
-curve = SubResource( 3 )
+[sub_resource type="CurveTexture" id=3]
+curve = SubResource( 2 )
 
-[sub_resource type="ParticlesMaterial" id=5]
+[sub_resource type="ParticlesMaterial" id=4]
 emission_shape = 1
 emission_sphere_radius = 1.0
 flag_disable_z = true
 gravity = Vector3( 0, 5, 0 )
 orbit_velocity = 0.0
 orbit_velocity_random = 0.0
-scale_curve = SubResource( 4 )
+scale_curve = SubResource( 3 )
 
 [node name="Ship" type="Node2D"]
 position = Vector2( 0, 5 )
 
 [node name="KinematicBody2D" type="KinematicBody2D" parent="."]
-position = Vector2( 0, -0.854692 )
+position = Vector2( 0, 2 )
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="KinematicBody2D"]
 polygon = PoolVector2Array( -23, 6, -16, 2, -13, 2, -13, -7, -12, -10, -8, -18, -7, -19, 7, -19, 8, -18, 12, -10, 13, -7, 13, 2, 16, 2, 23, 6, 23, 13, 14, 13, 11, 21, -11, 21, -14, 13, -23, 13 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="KinematicBody2D"]
 autoplay = "Hover"
-anims/Hover = SubResource( 2 )
+anims/Hover = SubResource( 1 )
 
 [node name="Sprite" type="Sprite" parent="KinematicBody2D"]
 texture = ExtResource( 1 )
@@ -58,7 +58,7 @@ position = Vector2( -10, 21 )
 amount = 12
 lifetime = 2.0
 preprocess = 2.0
-process_material = SubResource( 5 )
+process_material = SubResource( 4 )
 texture = ExtResource( 2 )
 
 [node name="Flame2" type="Particles2D" parent="KinematicBody2D/Flames"]
@@ -66,7 +66,7 @@ position = Vector2( 0, 21 )
 amount = 12
 lifetime = 2.0
 preprocess = 2.0
-process_material = SubResource( 5 )
+process_material = SubResource( 4 )
 texture = ExtResource( 2 )
 
 [node name="Flame3" type="Particles2D" parent="KinematicBody2D/Flames"]
@@ -74,5 +74,5 @@ position = Vector2( 10, 21 )
 amount = 12
 lifetime = 2.0
 preprocess = 2.0
-process_material = SubResource( 5 )
+process_material = SubResource( 4 )
 texture = ExtResource( 2 )
