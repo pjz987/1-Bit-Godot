@@ -59,6 +59,9 @@ enabled = true
 cast_to = Vector2( 4, 0 )
 collision_mask = 2
 
+[node name="PowerupSpawnPoint" parent="." index="8"]
+position = Vector2( 0, -7 )
+
 [editable path="Hurtbox"]
 
 [editable path="Hitbox"]

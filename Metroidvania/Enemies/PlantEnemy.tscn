@@ -71,6 +71,9 @@ position = Vector2( 0, -9 )
 [node name="FireDirection" type="Position2D" parent="." index="7"]
 position = Vector2( 0, -16 )
 
+[node name="PowerupSpawnPoint" parent="." index="8"]
+position = Vector2( 0, -9 )
+
 [editable path="Hurtbox"]
 
 [editable path="Hitbox"]

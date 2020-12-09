@@ -2,12 +2,14 @@ extends "res://Enemies/Enemy.gd"
 
 var MainInstances = ResourceLoader.MainInstances
 const Bullet = preload("res://Enemies/EnemyBullet.tscn")
+const BossDeathEffect = preload("res://Effects/BossDeathEffect.tscn")
 
 export (int) var ACCELERATION = 70
 export (float) var DECELERATION = 0.05
 export (int) var DIVE_ACCELERATION = 200
 export (bool) var shoot_mode = false
 
+onready var powerUpSpawnPoint = $PowerupSpawnPoint
 onready var rightWallCheck = $RightWallCheck
 onready var leftWallCheck = $LeftWallCheck
 onready var animationPlayer = $AnimationPlayer
@@ -17,7 +19,8 @@ enum {
 	SHOOT,
 	PRE_DIVE,
 	DIVE,
-	POST_DIVE
+	POST_DIVE,
+	STILL
 }
 
 var state = PRE_DIVE
@@ -39,6 +42,8 @@ func _process(delta):
 			dive(delta)
 		PRE_DIVE:
 			pre_dive(delta)
+		STILL:
+			animationPlayer.play("Fly")
 
 func chase_player(delta):
 	var player = MainInstances.Player
@@ -88,11 +93,18 @@ func fire_bullet():
 	return bullet
 
 func _on_Timer_timeout():
-#	match state:
-#		SHOOT:
-	fire_bullet()
+	match state:
+		SHOOT:
+			fire_bullet()
+		PRE_DIVE:
+			fire_bullet()
+		DIVE:
+			fire_bullet()
 
 func _on_EnemyStats_enemy_died():
+	state = STILL
 	emit_signal("died")
 	SaverAndLoader.custom_data.boss_defeated = true
-	._on_EnemyStats_enemy_died()
+	Utils.instance_scene_on_main(BossDeathEffect, powerUpSpawnPoint.global_position)
+	yield(get_tree().create_timer(4), "timeout")
+	queue_free()

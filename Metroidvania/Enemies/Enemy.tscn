@@ -23,5 +23,7 @@ collision_layer = 8
 
 [node name="Hitbox" parent="." instance=ExtResource( 4 )]
 collision_mask = 4
+
+[node name="PowerupSpawnPoint" type="Position2D" parent="."]
 [connection signal="hit" from="Hurtbox" to="." method="_on_Hurtbox_hit"]
 [connection signal="enemy_died" from="EnemyStats" to="." method="_on_EnemyStats_enemy_died"]
