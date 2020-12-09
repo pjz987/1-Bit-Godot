@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Effects/ExplosionEffect.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Effects/BigExplosionEffect.gd" type="Script" id=2]
+
+[node name="BigExplosionEffect" instance=ExtResource( 1 )]
+scale = Vector2( 2, 2 )
+script = ExtResource( 2 )

@@ -3,12 +3,14 @@ extends "res://Enemies/Enemy.gd"
 var MainInstances = ResourceLoader.MainInstances
 const Bullet = preload("res://Enemies/EnemyBullet.tscn")
 const BossDeathEffect = preload("res://Effects/BossDeathEffect.tscn")
+const BigExplosionEffect = preload("res://Effects/BigExplosionEffect.tscn")
 
 export (int) var ACCELERATION = 70
 export (float) var DECELERATION = 0.05
 export (int) var DIVE_ACCELERATION = 200
 export (bool) var shoot_mode = false
 
+onready var hurtboxCollider = $Hurtbox/Collider
 onready var powerUpSpawnPoint = $PowerupSpawnPoint
 onready var rightWallCheck = $RightWallCheck
 onready var leftWallCheck = $LeftWallCheck
@@ -20,11 +22,14 @@ enum {
 	PRE_DIVE,
 	DIVE,
 	POST_DIVE,
-	STILL
+	DIE
 }
 
 var state = PRE_DIVE
 var dive_points_index = 0
+var death_start = true
+var death_rotation = 0
+var death_fall_direction = 0
 
 signal died
 
@@ -42,8 +47,9 @@ func _process(delta):
 			dive(delta)
 		PRE_DIVE:
 			pre_dive(delta)
-		STILL:
+		DIE:
 			animationPlayer.play("Fly")
+			die(delta)
 
 func chase_player(delta):
 	var player = MainInstances.Player
@@ -92,6 +98,21 @@ func fire_bullet():
 	bullet.velocity = velocity
 	return bullet
 
+func die(delta):
+	if death_start:
+		death_fall_direction = sign(rand_range(-0.5, 0.5))
+		death_rotation = death_fall_direction * 2
+	motion.x += ACCELERATION * delta * death_fall_direction
+	motion.x = clamp(motion.x, -MAX_SPEED, MAX_SPEED)
+	motion.y += ACCELERATION * delta / 2
+	motion.y = clamp(motion.y, -MAX_SPEED, MAX_SPEED)
+	print(motion)
+	move_and_collide(motion * delta)
+#	global_position += motion * delta
+	rotation_degrees += death_rotation
+		
+	
+
 func _on_Timer_timeout():
 	match state:
 		SHOOT:
@@ -102,9 +123,12 @@ func _on_Timer_timeout():
 			fire_bullet()
 
 func _on_EnemyStats_enemy_died():
-	state = STILL
+	hurtboxCollider.disabled = true
+	motion = Vector2.ZERO
+	state = DIE
 	emit_signal("died")
 	SaverAndLoader.custom_data.boss_defeated = true
-	Utils.instance_scene_on_main(BossDeathEffect, powerUpSpawnPoint.global_position)
-	yield(get_tree().create_timer(4), "timeout")
+	Utils.instance_scene_on_node(self, BossDeathEffect, powerUpSpawnPoint.global_position)
+	yield(get_tree().create_timer(5), "timeout")
+	Utils.instance_scene_on_main(BigExplosionEffect, powerUpSpawnPoint.global_position)
 	queue_free()

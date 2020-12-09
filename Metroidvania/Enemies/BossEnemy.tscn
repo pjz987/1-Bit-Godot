@@ -973,7 +973,7 @@ position = Vector2( 0, -7 )
 shape = SubResource( 5 )
 
 [node name="EnemyStats" parent="." index="4"]
-max_health = 20
+max_health = 1
 
 [node name="Collider" parent="Hitbox" index="0"]
 shape = SubResource( 6 )
