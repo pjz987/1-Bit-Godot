@@ -48,7 +48,7 @@ func _process(delta):
 		PRE_DIVE:
 			pre_dive(delta)
 		DIE:
-			animationPlayer.play("Fly")
+			animationPlayer.play("Fly", -1, 0.5)
 			die(delta)
 
 func chase_player(delta):

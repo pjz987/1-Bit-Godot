@@ -6,3 +6,6 @@
 [node name="BigExplosionEffect" instance=ExtResource( 1 )]
 scale = Vector2( 2, 2 )
 script = ExtResource( 2 )
+
+[node name="AnimationPlayer" parent="." index="1"]
+playback_speed = 0.5
