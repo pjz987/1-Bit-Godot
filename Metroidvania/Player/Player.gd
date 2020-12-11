@@ -29,6 +29,7 @@ onready var gun = $Sprite/PlayerGun
 onready var muzzle = $Sprite/PlayerGun/Sprite/Muzzle
 onready var powerupDetector = $PowerupDetector
 onready var cameraFollow = $CameraFollow
+onready var rocketBoots = $Sprite/RocketBoots
 
 enum {
 	MOVE,
@@ -181,6 +182,10 @@ func jump_and_ladder_check():
 		if Input.is_action_just_pressed("jump") and double_jump:
 			jump(JUMP_FORCE * 0.75)
 			double_jump = false
+			for rocket in rocketBoots.get_children():
+				rocket.emitting = true
+				yield(get_tree().create_timer(0.5), "timeout")
+				rocket.emitting = false
 
 func jump(force):
 	SoundFX.play("Jump", rand_range(0.8, 1.1), -10)
