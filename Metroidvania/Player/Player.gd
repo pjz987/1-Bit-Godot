@@ -9,6 +9,7 @@ const PlayerMissile = preload("res://Player/PlayerMissile.tscn")
 var PlayerStats = ResourceLoader.PlayerStats
 var MainInstances = ResourceLoader.MainInstances
 
+export (int) var MASS = 10
 export (int) var ACCELERATION = 512
 export (int) var MAX_SPEED = 64
 export (float) var FRICTION = 0.25
@@ -37,9 +38,6 @@ enum {
 	LADDER,
 	PLANET
 }
-
-
-
 
 var state = MOVE
 var invincible = false setget set_invincible
@@ -78,6 +76,13 @@ func _ready():
 func queue_free():
 	MainInstances.Player = null
 	.queue_free()
+
+func rotate_player(planet):
+	var x_offset = global_position.x - planet.global_position.x
+	var y_offset = global_position.y - planet.global_position.y
+	var vector_to_player = Vector2(x_offset, y_offset)
+	var angle_radians = vector_to_player.angle()
+	rotation_degrees = rad2deg(angle_radians) + 90
 
 func _physics_process(delta):
 	just_jumped = false
