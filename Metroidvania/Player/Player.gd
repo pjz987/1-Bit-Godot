@@ -34,8 +34,11 @@ onready var rocketBoots = $Sprite/RocketBoots
 enum {
 	MOVE,
 	WALL_SLIDE,
-	LADDER
+	LADDER,
+	PLANET
 }
+
+
 
 
 var state = MOVE
@@ -80,6 +83,9 @@ func _physics_process(delta):
 	just_jumped = false
 	
 	match state:
+		PLANET:
+			var input_vector = get_input_vector()
+		
 		MOVE:
 			var input_vector = get_input_vector()
 			apply_horizontal_force(delta, input_vector)
@@ -106,7 +112,7 @@ func _physics_process(delta):
 		LADDER:
 			climb_animation()
 			climb_ladder()
-	
+		
 	if Input.is_action_pressed("fire") and fireBulletTimer.time_left == 0:
 		fire_bullet()
 	
@@ -184,8 +190,8 @@ func jump_and_ladder_check():
 			double_jump = false
 			for rocket in rocketBoots.get_children():
 				rocket.emitting = true
-				yield(get_tree().create_timer(0.5), "timeout")
-				rocket.emitting = false
+#				yield(get_tree().create_timer(0.5), "timeout")
+#				rocket.emitting = false
 
 func jump(force):
 	SoundFX.play("Jump", rand_range(0.8, 1.1), -10)
