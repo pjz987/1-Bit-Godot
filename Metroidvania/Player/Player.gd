@@ -102,15 +102,16 @@ func _physics_process(delta):
 	
 	match state:
 		State.PLANET:
-			print(motion)
 			var input_vector = get_input_vector()
 			var planet = get_only_planet()
-			rotate_player(planet)
 			var down = (planet.global_position - global_position).normalized()
+			var up = (global_position - planet.global_position).normalized()
+			rotate_player(planet)
+			apply_horizontal_force(delta, input_vector, up)
 			update_snap_vector(down)
+			jump_and_ladder_check(up)
 			planet_gravity(planet, delta)
 			update_animations(input_vector)
-			var up = (global_position - planet.global_position).normalized()
 			move(up)
 		
 		State.MOVE:
@@ -186,14 +187,26 @@ func get_input_vector():
 	input_vector.x = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
 	return input_vector
 
-func apply_horizontal_force(delta, input_vector):
+func apply_horizontal_force(delta, input_vector, floor_normal=null):
 	if input_vector.x != 0:
-		motion.x += input_vector.x * ACCELERATION * delta
-		motion.x = clamp(motion.x, -MAX_SPEED, MAX_SPEED)
+		match state:
+			State.MOVE:
+				motion.x += input_vector.x * ACCELERATION * delta
+				motion.x = clamp(motion.x, -MAX_SPEED, MAX_SPEED)
+			State.PLANET:
+				var horizontal_force = (input_vector.x * ACCELERATION * delta)
+				var angle_from_floor = rad2deg(floor_normal.angle()) + 90
+				var horizontal_motion = Vector2(horizontal_force, 0)
+				motion += horizontal_motion.rotated(deg2rad(angle_from_floor)).clamped(MAX_SPEED)
+#				motion += input_vector.x
 
-func apply_friction(input_vector):
+func apply_friction(input_vector, floor_normal=null):
 	if input_vector.x == 0 and is_on_floor():
-		motion.x = lerp(motion.x, 0, FRICTION)
+		match state:
+			State.MOVE:
+				motion.x = lerp(motion.x, 0, FRICTION)
+			State.PLANET:
+				motion = motion.linear_interpolate(Vector2.ZERO, FRICTION)
 
 func update_snap_vector(planet_gravity_down=null):
 	if is_on_floor():
@@ -202,32 +215,37 @@ func update_snap_vector(planet_gravity_down=null):
 			State.PLANET:
 				snap_vector = planet_gravity_down
 
-func jump_and_ladder_check():
+func jump_and_ladder_check(planet_jump_vector=null):
 	if over_ladder:
 		if Input.is_action_just_pressed("ui_up") or Input.is_action_just_pressed("ui_down"):
 			state = State.LADDER
 	
 	elif is_on_floor() or coyoteJumpTimer.time_left > 0:
 		if Input.is_action_just_pressed("jump"):
-			jump(JUMP_FORCE)
+			jump(JUMP_FORCE, planet_jump_vector)
 			just_jumped = true
 	else:
 		if Input.is_action_just_released("jump") and motion.y < -JUMP_FORCE/2:
 			motion.y = -JUMP_FORCE / 2
 		
 		if Input.is_action_just_pressed("jump") and double_jump:
-			jump(JUMP_FORCE * 0.75)
+			jump(JUMP_FORCE * 0.75, planet_jump_vector)
 			double_jump = false
 			for rocket in rocketBoots.get_children():
 				rocket.emitting = true
 #				yield(get_tree().create_timer(0.5), "timeout")
 #				rocket.emitting = false
 
-func jump(force):
+func jump(force, planet_jump_vector=null):
 	SoundFX.play("Jump", rand_range(0.8, 1.1), -10)
 	Utils.instance_scene_on_main(JumpEffect, global_position)
-	motion.y = -force
-	snap_vector = Vector2.ZERO
+	match state:
+		State.MOVE:
+			motion.y = -force
+			snap_vector = Vector2.ZERO
+		State.PLANET:
+			motion = planet_jump_vector * force
+			snap_vector = Vector2.ZERO
 
 func apply_gravity(delta):
 	if !is_on_floor():
@@ -261,11 +279,13 @@ func move(planet_grav_up=null):
 		
 	motion = move_and_slide_with_snap(motion, snap_vector * 4, up, true, 4, deg2rad(MAX_SLOPE_ANGLE))
 	
-	#landing
-	if was_in_air and is_on_floor():
-		motion.x = last_motion.x
-		Utils.instance_scene_on_main(JumpEffect, global_position)
-		double_jump = true
+#	#landing
+	match state:
+		State.MOVE:
+			if was_in_air and is_on_floor():
+				motion.x = last_motion.x
+				Utils.instance_scene_on_main(JumpEffect, global_position)
+				double_jump = true
 	
 	# just left ground
 	if was_on_floor and !is_on_floor() and !just_jumped:

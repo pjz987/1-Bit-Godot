@@ -8,8 +8,11 @@
 
 [node name="Player" parent="." instance=ExtResource( 2 )]
 position = Vector2( 144, -80 )
+ACCELERATION = 256
+MAX_SPEED = 32
 state = 3
 
 [node name="Camera" parent="." instance=ExtResource( 3 )]
 
 [node name="Planet" parent="." instance=ExtResource( 1 )]
+MASS = 4000
