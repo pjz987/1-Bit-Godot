@@ -102,6 +102,8 @@ func _physics_process(delta):
 	
 	match state:
 		State.PLANET:
+			print(is_on_floor())
+			print(snap_vector)
 			var input_vector = get_input_vector()
 			var planet = get_only_planet()
 			var down = (planet.global_position - global_position).normalized()
@@ -273,29 +275,31 @@ func move(planet_grav_up=null):
 	var last_position = position
 	var last_motion = motion
 	var up = Vector2.UP
+	var snap_mult = 1
 	match state:
 		State.PLANET:
+			snap_mult *= 2
 			up = planet_grav_up
 		
-	motion = move_and_slide_with_snap(motion, snap_vector * 4, up, true, 4, deg2rad(MAX_SLOPE_ANGLE))
+	motion = move_and_slide_with_snap(motion, snap_vector * 4 * snap_mult, up, true, 4, deg2rad(MAX_SLOPE_ANGLE))
 	
-#	#landing
 	match state:
 		State.MOVE:
+#			#landing
 			if was_in_air and is_on_floor():
 				motion.x = last_motion.x
 				Utils.instance_scene_on_main(JumpEffect, global_position)
 				double_jump = true
-	
-	# just left ground
-	if was_on_floor and !is_on_floor() and !just_jumped:
-		motion.y = 0
-		position.y = last_position.y
-		coyoteJumpTimer.start()
+			
+			# just left ground
+			if was_on_floor and !is_on_floor() and !just_jumped:
+				motion.y = 0
+				position.y = last_position.y
+				coyoteJumpTimer.start()
 
-	# prevent sliding (hack!)
-	if is_on_floor() and get_floor_velocity().length() == 0 and abs(motion.x) < 1:
-		position.x = last_position.x
+			# prevent sliding (hack!)
+			if is_on_floor() and get_floor_velocity().length() == 0 and abs(motion.x) < 1:
+				position.x = last_position.x
 
 func wall_slide_check():
 	if not is_on_floor() and is_on_wall():
