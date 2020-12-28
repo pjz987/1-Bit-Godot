@@ -8,6 +8,7 @@ const PlayerMissile = preload("res://Player/PlayerMissile.tscn")
 
 var PlayerStats = ResourceLoader.PlayerStats
 var MainInstances = ResourceLoader.MainInstances
+var Physics = ResourceLoader.Physics
 
 export (int) var MASS = 10
 export (int) var ACCELERATION = 512
@@ -32,14 +33,17 @@ onready var powerupDetector = $PowerupDetector
 onready var cameraFollow = $CameraFollow
 onready var rocketBoots = $Sprite/RocketBoots
 
-enum {
+enum State {
 	MOVE,
 	WALL_SLIDE,
 	LADDER,
 	PLANET
 }
 
-var state = MOVE
+
+
+export (State) var state = State.MOVE
+#var state = State.MOVE
 var invincible = false setget set_invincible
 var motion = Vector2.ZERO
 var snap_vector = Vector2.ZERO
@@ -82,16 +86,34 @@ func rotate_player(planet):
 	var y_offset = global_position.y - planet.global_position.y
 	var vector_to_player = Vector2(x_offset, y_offset)
 	var angle_radians = vector_to_player.angle()
-	rotation_degrees = rad2deg(angle_radians) + 90
+	var perpendicular_to_surface = rad2deg(angle_radians) + 90
+	rotation_degrees = lerp(rotation_degrees, perpendicular_to_surface, 0.05)
+	
+
+func planet_gravity(planet, delta):
+	if !is_on_floor():
+		var gravitational_force = Physics.newtonian_gravity(self, planet)
+		var dir = planet.global_position - global_position
+		motion += gravitational_force * dir
+	
 
 func _physics_process(delta):
 	just_jumped = false
 	
 	match state:
-		PLANET:
+		State.PLANET:
+			print(motion)
 			var input_vector = get_input_vector()
+			var planet = get_only_planet()
+			rotate_player(planet)
+			var down = (planet.global_position - global_position).normalized()
+			update_snap_vector(down)
+			planet_gravity(planet, delta)
+			update_animations(input_vector)
+			var up = (global_position - planet.global_position).normalized()
+			move(up)
 		
-		MOVE:
+		State.MOVE:
 			var input_vector = get_input_vector()
 			apply_horizontal_force(delta, input_vector)
 			apply_friction(input_vector)
@@ -102,7 +124,7 @@ func _physics_process(delta):
 			move()
 			wall_slide_check()
 		
-		WALL_SLIDE:
+		State.WALL_SLIDE:
 			spriteAnimator.play("Wall Slide")
 			
 			var wall_axis = get_wall_axis()
@@ -114,7 +136,7 @@ func _physics_process(delta):
 			move()
 			wall_detatch(delta, wall_axis)
 		
-		LADDER:
+		State.LADDER:
 			climb_animation()
 			climb_ladder()
 		
@@ -173,14 +195,17 @@ func apply_friction(input_vector):
 	if input_vector.x == 0 and is_on_floor():
 		motion.x = lerp(motion.x, 0, FRICTION)
 
-func update_snap_vector():
+func update_snap_vector(planet_gravity_down=null):
 	if is_on_floor():
 		snap_vector = Vector2.DOWN
+		match state:
+			State.PLANET:
+				snap_vector = planet_gravity_down
 
 func jump_and_ladder_check():
 	if over_ladder:
 		if Input.is_action_just_pressed("ui_up") or Input.is_action_just_pressed("ui_down"):
-			state = LADDER
+			state = State.LADDER
 	
 	elif is_on_floor() or coyoteJumpTimer.time_left > 0:
 		if Input.is_action_just_pressed("jump"):
@@ -224,13 +249,17 @@ func update_animations(input_vector):
 	if !is_on_floor():
 		spriteAnimator.play("Jump")
 
-func move():
+func move(planet_grav_up=null):
 	var was_in_air = !is_on_floor()
 	var was_on_floor = is_on_floor()
 	var last_position = position
 	var last_motion = motion
-	
-	motion = move_and_slide_with_snap(motion, snap_vector * 4, Vector2.UP, true, 4, deg2rad(MAX_SLOPE_ANGLE))
+	var up = Vector2.UP
+	match state:
+		State.PLANET:
+			up = planet_grav_up
+		
+	motion = move_and_slide_with_snap(motion, snap_vector * 4, up, true, 4, deg2rad(MAX_SLOPE_ANGLE))
 	
 	#landing
 	if was_in_air and is_on_floor():
@@ -250,7 +279,7 @@ func move():
 
 func wall_slide_check():
 	if not is_on_floor() and is_on_wall():
-		state = WALL_SLIDE
+		state = State.WALL_SLIDE
 		double_jump = true
 		create_dust_effect()
 
@@ -264,7 +293,7 @@ func wall_slide_jump_check(wall_axis):
 		SoundFX.play("Jump", rand_range(0.8, 1.1), -10)
 		motion.x = wall_axis * MAX_SPEED
 		motion.y = -JUMP_FORCE / 1.25
-		state = MOVE
+		state = State.MOVE
 		var dust_position = global_position + Vector2(wall_axis * 4, -2)
 		var dust = Utils.instance_scene_on_main(WallDustEffect, dust_position)
 		dust.scale.x = wall_axis
@@ -278,13 +307,13 @@ func wall_slide_drop(delta):
 func wall_detatch(delta, wall_axis):
 	if Input.is_action_just_pressed("ui_right"):
 		motion.x = ACCELERATION * delta
-		state = MOVE
+		state = State.MOVE
 	
 	if Input.is_action_just_pressed("ui_left"):
 		motion.x = -ACCELERATION * delta
-		state = MOVE
+		state = State.MOVE
 	if wall_axis == 0 or is_on_floor():
-		state = MOVE
+		state = State.MOVE
 
 func climb_ladder():
 	if Input.is_action_pressed("ui_up"):
@@ -295,16 +324,16 @@ func climb_ladder():
 		SoundFX.play("Jump", rand_range(0.8, 1.1), -10)
 		motion.x = -MAX_SPEED / 2
 		motion.y = -JUMP_FORCE / 1.25
-		state = MOVE
+		state = State.MOVE
 	elif Input.is_action_just_pressed("ui_right"):
 		SoundFX.play("Jump", rand_range(0.8, 1.1), -10)
 		motion.x = MAX_SPEED / 2
 		motion.y = -JUMP_FORCE / 1.25
-		state = MOVE
+		state = State.MOVE
 	elif Input.is_action_just_pressed("jump"):
 		jump(JUMP_FORCE)
 		just_jumped = true
-		state = MOVE
+		state = State.MOVE
 
 func climb_animation():
 	if Input.is_action_pressed("ui_up") or Input.is_action_pressed("ui_down"):
@@ -333,4 +362,10 @@ func _on_LadderDetector_body_entered(body):
 func _on_LadderDetector_body_exited(_body):
 	over_ladder = false
 	ladder = null
-	state = MOVE
+	state = State.MOVE
+
+func get_planets():
+	return get_tree().get_nodes_in_group("Planets")
+
+func get_only_planet():
+	return get_planets()[0]

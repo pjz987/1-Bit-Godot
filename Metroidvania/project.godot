@@ -15,6 +15,11 @@ _global_script_classes=[ {
 "path": "res://MainInstances.gd"
 }, {
 "base": "Resource",
+"class": "Physics",
+"language": "GDScript",
+"path": "res://Physics.gd"
+}, {
+"base": "Resource",
 "class": "PlayerStats",
 "language": "GDScript",
 "path": "res://Player/PlayerStats.gd"
@@ -26,6 +31,7 @@ _global_script_classes=[ {
 } ]
 _global_script_class_icons={
 "MainInstances": "",
+"Physics": "",
 "PlayerStats": "",
 "Powerup": ""
 }
